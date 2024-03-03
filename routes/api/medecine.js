@@ -5,4 +5,5 @@ const router = express.Router();
 
 router.post("/add", upload.single("image"), addMedicineToPharmacy);
 
+
 module.exports = router;

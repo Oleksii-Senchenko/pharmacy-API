@@ -4,8 +4,10 @@ const Medicine = require("../models/medicks");
 const Pharmacy = require("../models/pharmacies");
 const cloudinary = require("../service/cloudinary");
 const fs = require("fs/promises");
+
+
 const addMedicineToPharmacy = tryCatch(async (req, res) => {
-  const { pharmacyId, name } = req.body;
+  const { pharmacyId } = req.body;
 
   if (req.file) {
     const { path: tempUpload } = req.file;
@@ -15,7 +17,6 @@ const addMedicineToPharmacy = tryCatch(async (req, res) => {
     const image = resultImg.url;
 
     req.body.image = image;
-    console.log("imagggggggggggggggggggge", image);
   }
 
   const pharmacy = await Pharmacy.findById(pharmacyId);
@@ -24,12 +25,10 @@ const addMedicineToPharmacy = tryCatch(async (req, res) => {
     throw HttpError(404, "Pharmacy not found");
   }
 
-  const newMedicine = new Medicine({
-    ...req.body,
+  await Medicine.create({
+    ...req.body, 
     pharmacy: pharmacy._id,
-  });
-
-  await newMedicine.save();
+  });;
 
   res.status(201).json({ message: "Successfully added" });
 });

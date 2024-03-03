@@ -1,9 +1,9 @@
 const HttpError = require("../helpers/HttpError");
 const tryCatch = require("../middlewares/tryCatch");
+const Medicine = require("../models/medicks");
 const Pharmacy = require("../models/pharmacies");
 
 const addPharmacy = tryCatch(async (req, res) => {
-  console.log(req.body);
   const name = req.body.name;
   const pharmacy = await Pharmacy.findOne({ name });
 
@@ -18,4 +18,35 @@ const addPharmacy = tryCatch(async (req, res) => {
 
   res.status(201).json(responce);
 });
-module.exports = { addPharmacy };
+
+const getPharmacy = tryCatch(async (req, res) => {
+  const pharmacy = await Pharmacy.find();
+  res.status(200).json(pharmacy);
+});
+
+const getMedicalByPharmacy = tryCatch(async (req, res) => {
+  const { id } = req.params;
+
+  const pharmacy = await Pharmacy.findById(id);
+
+  if (!pharmacy) {
+    return res.status(404).json({ message: "Pharmacy dont found" });
+  }
+
+  const medicines = await Medicine.find({ pharmacy: id });
+
+  res.status(200).json(medicines);
+});
+
+const getAllPharmacy = tryCatch(async (req, res) => {
+  const medicines = await Medicine.find();
+
+  res.status(200).json(medicines);
+});
+
+module.exports = {
+  addPharmacy,
+  getPharmacy,
+  getMedicalByPharmacy,
+  getAllPharmacy,
+};
